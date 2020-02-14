@@ -1,37 +1,38 @@
 let
   nixpkgs = import <nixpkgs> {};
-  local = import ./local.nix;
+  local = import ./local.nix nixpkgs;
 in
+with nixpkgs.lib;
 
 {
+  network.description = "Production";
+
   mainServer =
-    { configs, pkgs, ... }:
+    { ... }:
     {
       deployment = {
-        targetHost = local.mainServerIp;
+        targetHost = local.mainNetworking.publicIPv4;
         targetPort = local.mainServerPort;
       };
 
       imports = [
-        ./main-server/hardware-configuration.nix
-        ./main-server/networking.nix
+        <nixpkgs/nixos/modules/profiles/qemu-guest.nix>
       ];
 
       boot.cleanTmpDir = true;
-      networking = {
-        hostName = "2ndh.l.time4vps.cloud";
-        firewall.allowPing = true;
-        publicIPv4 = local.mainServerIp;
+      boot.loader.grub.device = "/dev/sda";
+      fileSystems."/" = {
+        device = "/dev/sda1";
+        fsType = "ext4";
       };
 
-      users.mutableUsers = false;
-      users.users.root.openssh.authorizedKeys.keys = [local.mainServerKey];
-      services.openssh = {
-        enable = true;
-        listenAddresses = [{ addr = local.mainServerIp; }];
-        ports = [ local.mainServerPort ];
-        passwordAuthentication = false;
-        permitRootLogin = "yes";
+      networking = recursiveUpdate
+        { firewall.allowPing = true; }
+        local.mainNetworking;
+
+      rogryza.ssh = {
+        port = local.mainServerPort;
+        rootKey = local.mainServerKey;
       };
     };
 }
