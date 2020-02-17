@@ -1,2 +1,4 @@
-import ./run-tests.nix
-  [ ./ssh.nix ]
+import ./run-tests.nix [
+  ./ssh.nix
+  ./reverse-proxy.nix
+]

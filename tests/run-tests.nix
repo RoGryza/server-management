@@ -2,12 +2,22 @@ modules:
 import <nixpkgs/nixos/tests/make-test-python.nix> ({ lib, pkgs, ... }:
   with lib;
   let
+    nodeType = mkOptionType {
+      name = "node";
+      check = isAttrs;
+      merge = loc: defs:
+        let vals = map (def: def.value) defs;
+        in (foldl' attrsets.recursiveUpdate {} vals) // {
+          imports = concatMap ({ imports ? [], ... }: imports) vals;
+        };
+      emptyValue = {};
+    };
     defaultModule = rec {
       _file = ./run-tests.nix;
       key = _file;
       options = {
         nodes = mkOption {
-          type = types.attrsOf types.attrs;
+          type = types.attrsOf nodeType;
           default = {
             server = {};
             client = {};
@@ -37,10 +47,11 @@ import <nixpkgs/nixos/tests/make-test-python.nix> ({ lib, pkgs, ... }:
     '';
   in {
     inherit (built.config) nodes;
+    skipLint = true;
     testScript = ''
     start_all()
-    ${strings.concatMapStringsSep "\n" toSubtest built.config.testScript}
     client.wait_for_unit("network.target")
     client.wait_until_succeeds("ping -c 1 server")
+    ${strings.concatMapStringsSep "\n" toSubtest built.config.testScript}
     '';
   })
