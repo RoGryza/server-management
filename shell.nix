@@ -2,7 +2,8 @@ let
   pkgs = import <nixpkgs> {};
 in
 pkgs.mkShell {
-  buildInputs = [
-    pkgs.nixops
+  buildInputs = with pkgs; [
+    nixfmt
+    nixops
   ];
 }

@@ -1,5 +1,5 @@
 import ./run-tests.nix [
-  ./ssh.nix
   ./reverse-proxy.nix
+  ./ssh.nix
   ./static.nix
 ]

@@ -9,6 +9,7 @@ import <nixpkgs/nixos/tests/make-test-python.nix> ({ lib, pkgs, ... }:
         let vals = map (def: def.value) defs;
         in (foldl' attrsets.recursiveUpdate {} vals) // {
           imports = concatMap ({ imports ? [], ... }: imports) vals;
+          environment.systemPackages = concatMap ({ environment ? {}, ... }: (attrsets.attrByPath ["systemPackages"] [] environment)) vals;
         };
       emptyValue = {};
     };

@@ -26,9 +26,11 @@
     if (e != o):
       raise Exception(f"Expected {e!r}, got {o!r}")
 
-  o = server.succeed("curl localhost:8000 -H 'Host: foo.com'")
+  client.fail("curl server:8000 -H 'Host: foo.com' --max-time 2")
+  client.fail("curl server:8000 -H 'Host: bar.com' --max-time 2")
+  o = client.succeed("curl server -H 'Host: foo.com'")
   check_response(o, "hello foo\n")
-  o = server.succeed("curl localhost:8000 -H 'Host: bar.com'")
+  o = client.succeed("curl server -H 'Host: bar.com'")
   check_response(o, "hello bar\n")
   '';
 }

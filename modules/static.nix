@@ -1,6 +1,8 @@
 { config, lib, ... }:
 with lib;
 {
+  imports = [./reverse-proxy.nix];
+
   options.rogryza.static = {
     enable = mkEnableOption "enable";
 
@@ -28,5 +30,7 @@ with lib;
         })
         cfg.sites;
     };
+
+    rogryza.proxy.services."http://localhost:${toString cfg.port}" = attrNames cfg.sites;
   };
 }
