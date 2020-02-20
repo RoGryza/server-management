@@ -3,7 +3,6 @@
     server = {
       imports = [ ../modules/reverse-proxy.nix ];
       rogryza.proxy = {
-        port = 8080;
         services = {
           "http://localhost:3000" = [ "foo.com" ];
           "http://localhost:4000" = [ "bar.com" "qux.com" ];
@@ -31,7 +30,7 @@
   };
 
   testScript = ''
-    server.wait_for_open_port(8080)
+    server.wait_for_open_port(80)
     server.wait_for_open_port(3000)
     server.wait_for_open_port(4000)
 
@@ -39,11 +38,11 @@
       if (e != o):
         raise Exception(f"Expected {e!r}, got {o!r}")
 
-    o = client.succeed("curl server:8080 -H 'Host: foo.com'")
+    o = client.succeed("curl server -H 'Host: foo.com'")
     check_response(o, "foo")
-    o = client.succeed("curl server:8080 -H 'Host: bar.com'")
+    o = client.succeed("curl server -H 'Host: bar.com'")
     check_response(o, "bar")
-    o = client.succeed("curl server:8080 -H 'Host: qux.com'")
+    o = client.succeed("curl server -H 'Host: qux.com'")
     check_response(o, "qux")
   '';
 }

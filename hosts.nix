@@ -8,7 +8,6 @@ with nixpkgs.lib;
   network.description = "Production";
 
   mainServer =
-    { ... }:
     {
       deployment = {
         targetHost = local.mainNetworking.publicIPv4;
@@ -17,6 +16,9 @@ with nixpkgs.lib;
 
       imports = [
         <nixpkgs/nixos/modules/profiles/qemu-guest.nix>
+        ./modules/ssh.nix
+        ./modules/reverse-proxy.nix
+        ./modules/static.nix
       ];
 
       boot.cleanTmpDir = true;
