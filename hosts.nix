@@ -19,6 +19,7 @@ with nixpkgs.lib;
         ./modules/ssh.nix
         ./modules/reverse-proxy.nix
         ./modules/static.nix
+        ./modules/python-exercises.nix
       ];
 
       boot.cleanTmpDir = true;
@@ -35,6 +36,12 @@ with nixpkgs.lib;
       rogryza.ssh = {
         port = local.mainServerPort;
         rootKey = local.mainServerKey;
+      };
+
+      rogryza.static.enable = true;
+      rogryza.python-exercises = {
+        enable = true;
+        domain = "test.aulas.rogryza.me";
       };
     };
 }

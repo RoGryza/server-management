@@ -2,7 +2,10 @@
 {
   nodes = {
     server = {
-      imports = [../modules/static.nix];
+      imports = [
+        ../modules/reverse-proxy.nix
+        ../modules/static.nix
+      ];
       rogryza.static = {
         enable = true;
         port = 8000;
