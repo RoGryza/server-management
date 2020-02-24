@@ -30,6 +30,7 @@ with lib;
         tlsChallenge = {};
         caServer = cfg.tls.caServer;
         onHostRule = true;
+        storage = "/var/lib/traefik/acme.json";
       };
       entryPoints = {
         http.redirect.entrypoint = "https";

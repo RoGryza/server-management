@@ -38,10 +38,13 @@ with nixpkgs.lib;
         rootKey = local.mainServerKey;
       };
 
+      rogryza.proxy = {
+        tls.enable = true;
+      };
       rogryza.static.enable = true;
       rogryza.python-exercises = {
         enable = true;
-        domain = "test.aulas.rogryza.me";
+        domain = "aulas.rogryza.me";
       };
     };
 }
