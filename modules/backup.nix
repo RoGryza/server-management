@@ -31,7 +31,7 @@ in
     };
     startAt = mkOption {
       type = types.str;
-      default="*:0/15";
+      default = "*:0/15";
     };
   };
 

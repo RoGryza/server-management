@@ -17,6 +17,7 @@ with nixpkgs.lib;
 
       imports = [
         <nixpkgs/nixos/modules/profiles/qemu-guest.nix>
+        ./modules/backup.nix
         ./modules/ssh.nix
         ./modules/reverse-proxy.nix
         ./modules/static.nix
@@ -39,6 +40,12 @@ with nixpkgs.lib;
         package = pkgs.postgresql_11;
         dataDir = "/var/lib/postgresql/11";
       };
+      services.postgresqlBackup = {
+        enable = true;
+        backupAll = true;
+        location = "/var/backup/postgresql";
+        startAt = "*:1/00";
+      };
 
       rogryza.ssh = {
         port = local.mainServerPort;
@@ -52,6 +59,15 @@ with nixpkgs.lib;
       rogryza.python-exercises = {
         enable = true;
         domain = "aulas.rogryza.me";
+      };
+
+      rogryza.backup = {
+        enable = true;
+        remote = local.backupRemote;
+        paths.postgres = {
+          source = "/var/backup/postgresql";
+          dest = "postgresql";
+        };
       };
     };
 }
