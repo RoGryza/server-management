@@ -46,7 +46,6 @@ in
           (name: {source, dest, ...}: nameValuePair "backup-${name}" {
             description = "Backup of ${source}";
             serviceConfig.Type = "oneshot";
-            serviceConfig.Persistent = true;
 
             script = ''
           if [ -e "${source}" ]; then
