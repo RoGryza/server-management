@@ -2,6 +2,7 @@ let
   nixpkgs = import <nixpkgs> {};
   local = import ./local.nix nixpkgs;
 in
+with nixpkgs;
 with nixpkgs.lib;
 
 {
@@ -32,6 +33,12 @@ with nixpkgs.lib;
       networking = recursiveUpdate
         { firewall.allowPing = true; }
         local.mainNetworking;
+
+      services.postgresql = {
+        enable = true;
+        package = pkgs.postgresql_11;
+        dataDir = "/var/lib/postgresql/11";
+      };
 
       rogryza.ssh = {
         port = local.mainServerPort;

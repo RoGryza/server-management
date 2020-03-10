@@ -1,5 +1,13 @@
 modules:
-import <nixpkgs/nixos/tests/make-test-python.nix> ({ lib, pkgs, ... }:
+let
+  nixpkgs = builtins.fetchGit {
+    name = "nixos-unstable-2018-09-12";
+    url = https://github.com/nixos/nixpkgs-channels/;
+    ref = "refs/heads/nixos-unstable";
+    rev = "82b54d490663b6d87b7b34b9cfc0985df8b49c7d";
+  };
+in
+import "${nixpkgs}/nixos/tests/make-test-python.nix" ({ lib, pkgs, ... }:
   with lib;
   let
     nodeType = mkOptionType {
@@ -51,8 +59,12 @@ import <nixpkgs/nixos/tests/make-test-python.nix> ({ lib, pkgs, ... }:
     skipLint = true;
     testScript = ''
     start_all()
-    client.wait_for_unit("network.target")
-    client.wait_until_succeeds("ping -c 1 server")
+    try:
+      client.wait_for_unit("network.target")
+      client.wait_until_succeeds("ping -c 1 server")
+    except NameError:
+      pass
+
     ${strings.concatMapStringsSep "\n" toSubtest built.config.testScript}
     '';
   })
